@@ -8,7 +8,8 @@
         Title="CopyWindow" Height="100" Width="400">
         
     <Grid>
-        <ProgressBar Name="progressBar" HorizontalAlignment="Left" Height="20" Margin="10" VerticalAlignment="Top" Width="380" IsIndeterminate="True"/>
+        <ProgressBar Name="progressBar" HorizontalAlignment="Left" Height="20" Margin="10" VerticalAlignment="Top" Width="380" Minimum="0" Value="0"/>
         <Button x:Name="cancel" Content="Cancel" HorizontalAlignment="Left" Margin="299,35,0,0" VerticalAlignment="Top" Width="75" Click="cancel_Click"/>
+        <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="203,35,0,0" VerticalAlignment="Top" Width="75" Click="pause_Click"/>
     </Grid>
 </Window>

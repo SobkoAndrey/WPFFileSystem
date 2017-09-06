@@ -45,48 +45,17 @@ namespace FilesWork
             FillListView(expandedDir, listView2);
         }
 
-        private async void copy_Click(object sender, RoutedEventArgs e)
+        private void copy_Click(object sender, RoutedEventArgs e)
         {
+            var copyWindow = new CopyWindow();
+
             var itemToCopy = listView1.SelectedItem;
 
             if (itemToCopy is FileInfo)
             {
-                var item = itemToCopy as FileInfo;
+                copyWindow.Show();
 
-                if (listView2.SelectedValue != null)
-                {
-                    var destinationPath = (listView2.SelectedValue as DirectoryInfo).FullName;
-                    var fullDestinationPath = destinationPath + "\\copy_" + item.Name;
-
-                    using (FileStream SourceStream = File.Open(item.FullName, FileMode.Open))
-                    {
-                        using (FileStream DestinationStream = File.Create(fullDestinationPath))
-                        {
-                            var copyWindow = new CopyWindow();
-                            copyWindow.FilePath = fullDestinationPath;
-                            copyWindow.Show();
-                                            
-                            await SourceStream.CopyToAsync(DestinationStream);
-                            copyWindow.Close();
-                        }
-                    }
-                } else
-                {
-                    var destinationPath = "D:";
-                    var fullDestinationPath = destinationPath + "\\copy_" + item.Name;
-
-                    using (FileStream SourceStream = File.Open(item.FullName, FileMode.Open))
-                    {
-                        using (FileStream DestinationStream = File.Create(fullDestinationPath))
-                        {
-                            var copyWindow = new CopyWindow();
-                            copyWindow.FilePath = fullDestinationPath;
-                            copyWindow.Show();
-                            await SourceStream.CopyToAsync(DestinationStream);
-                            copyWindow.Close();
-                        }
-                    }
-                }
+                copyWindow.CopyFiles(itemToCopy as FileInfo, listView2);
             }
         }
 

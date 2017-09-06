@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,6 +18,9 @@ namespace FilesWork
 {
     public partial class CopyWindow : Window
     {
+        private CancellationTokenSource cts;
+        private PauseTokenSource pts;
+
         public string FilePath { get; set; }
 
         public CopyWindow()
@@ -24,11 +28,65 @@ namespace FilesWork
             InitializeComponent();
         }
 
+        public async void CopyFiles(FileInfo copyfile, ListView destinationListView)
+        {
+            cts = new CancellationTokenSource();
+            pts = new PauseTokenSource();
+
+            if (destinationListView.SelectedValue != null)
+            {
+                var destinationPath = (destinationListView.SelectedValue as DirectoryInfo).FullName;
+                var fullDestinationPath = destinationPath + "\\copy_" + copyfile.Name;
+                var dictionary = new Dictionary<string, string> { { copyfile.FullName, fullDestinationPath } };
+                progressBar.Maximum = 10000.0;
+                
+                try
+                {
+                    await Copier.CopyFiles(dictionary, cts.Token, pts.Token, prog => progressBar.Value = prog);
+                }
+                catch (OperationCanceledException exception)
+                {
+                    File.Delete(fullDestinationPath);
+                }
+
+                Close();
+            }
+            else
+            {
+                var destinationPath = "D:";
+                var fullDestinationPath = destinationPath + "\\copy_" + copyfile.Name;
+
+                var dictionary = new Dictionary<string, string>
+                        {
+                            {copyfile.FullName, fullDestinationPath}
+                        };
+
+                progressBar.Maximum = 10000.0;
+
+                try
+                {
+                    await Copier.CopyFiles(dictionary, cts.Token, pts.Token, prog => progressBar.Value = prog);
+                }
+                catch (OperationCanceledException exception)
+                {
+                    File.Delete(fullDestinationPath);
+                }
+
+                Close();
+            }
+        }
+
         private void cancel_Click(object sender, RoutedEventArgs e)
         {
-            
-            File.Delete(FilePath);
-            this.Close();
+            if (cts != null)
+            {
+                cts.Cancel();
+            }
+        }
+
+        private void pause_Click(object sender, RoutedEventArgs e)
+        {
+            pts.IsPaused = !pts.IsPaused;
         }
     }
 }
