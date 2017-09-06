@@ -33,7 +33,9 @@ namespace FilesWork
             cts = new CancellationTokenSource();
             pts = new PauseTokenSource();
 
-            if (destinationListView.SelectedValue != null)
+            if (destinationListView.SelectedValue != null)// вот тут не понятно зачем нам знать выделенный элемент destination
+                                                          //по идее надо выбирать source, а destiantion назначится методом исключения.
+                                                          //либо с переводом что то напутал и тут должен быть source
             {
                 var destinationPath = (destinationListView.SelectedValue as DirectoryInfo).FullName;
                 var fullDestinationPath = destinationPath + "\\copy_" + copyfile.Name;
@@ -51,9 +53,10 @@ namespace FilesWork
 
                 Close();
             }
-            else
+            else // не совсем понятно назначение блока else,  тут сплошное дублирование кода.
+                 //Если ничего не выбрано то и копировать ничего не надо
             {
-                var destinationPath = "D:";
+                var destinationPath = "D:";// так хардкодить нельзя, вдруг на компе нет диска Д
                 var fullDestinationPath = destinationPath + "\\copy_" + copyfile.Name;
 
                 var dictionary = new Dictionary<string, string>
